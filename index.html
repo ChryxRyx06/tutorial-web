@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Aprendizaje Web: HTML, CSS y XML</title>
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --sidebar-bg: #0f172a;
+            --sidebar-text: #94a3b8;
+            --sidebar-active: #38bdf8;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --accent-color: #2563eb;
+            --accent-hover: #1d4ed8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Sidebar Navigation */
+        #sidebar {
+            width: 310px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            overflow-y: auto;
+            border-right: 1px solid #1e293b;
+        }
+
+        #sidebar h2 {
+            color: #fff;
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            padding: 0 20px 15px 20px;
+            border-bottom: 1px solid #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-bg {
+            background-color: #334155;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-bar-fill {
+            background-color: var(--sidebar-active);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .module-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 15px 20px 5px 20px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .step-btn {
+            background: none;
+            border: none;
+            color: var(--sidebar-text);
+            padding: 10px 20px;
+            text-align: left;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-btn:hover {
+            background-color: #1e293b;
+            color: #fff;
+        }
+
+        .step-btn.active {
+            color: var(--sidebar-active);
+            border-left: 4px solid var(--sidebar-active);
+            background-color: #1e293b;
+            font-weight: 600;
+        }
+
+        /* Main Area */
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 25px 35px;
+        }
+
+        .header {
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            color: #0f172a;
+            font-size: 1.8rem;
+        }
+
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+
+        .content-card h3 {
+            margin-bottom: 8px;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+
+        .content-card p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        /* Playground / Editor Workspace */
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .workspace-actions button {
+            background-color: #e2e8f0;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .workspace-actions button:hover {
+            background-color: #cbd5e1;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            height: 380px;
+        }
+
+        .editor-container, .preview-container {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pane-title {
+            background-color: #e2e8f0;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+        }
+
+        textarea {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            font-family: 'Consolas', 'Fira Code', Monaco, monospace;
+            font-size: 0.9rem;
+            background-color: #0f172a;
+            color: #f8fafc;
+            resize: none;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            background-color: #ffffff;
+        }
+
+        /* Nav Footer Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div id="sidebar">
+        <h2>🌐 Curso Web Interactivo</h2>
+        
+        <div class="progress-container">
+            <span style="font-size: 0.8rem;" id="progress-text">Progreso: 0%</span>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="module-title">Módulo 1: HTML5</div>
+        <button class="step-btn active" onclick="loadStep(0)">1. Estructura Básica</button>
+        <button class="step-btn" onclick="loadStep(1)">2. Textos y Enlaces</button>
+        <button class="step-btn" onclick="loadStep(2)">3. Imágenes y Listas</button>
+        <button class="step-btn" onclick="loadStep(3)">4. Tablas y Estructura</button>
+        <button class="step-btn" onclick="loadStep(4)">5. Formularios Interactivos</button>
+
+        <div class="module-title">Módulo 2: CSS3</div>
+        <button class="step-btn" onclick="loadStep(5)">6. Estilos y Reglas CSS</button>
+        <button class="step-btn" onclick="loadStep(6)">7. Clases y Seleccionadores</button>
+        <button class="step-btn" onclick="loadStep(7)">8. El Modelo de Caja</button>
+        <button class="step-btn" onclick="loadStep(8)">9. Diseño Flexible (Flexbox)</button>
+
+        <div class="module-title">Módulo 3: XML</div>
+        <button class="step-btn" onclick="loadStep(9)">10. Introducción a XML</button>
+        <button class="step-btn" onclick="loadStep(10)">11. Reglas y Sintaxis XML</button>
+        <button class="step-btn" onclick="loadStep(11)">12. XML con Atributos</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="main-content">
+        <div class="header">
+            <h1 id="step-title">Cargando contenido...</h1>
+        </div>
+
+        <div class="content-card">
+            <h3>📖 Explicación Teórica</h3>
+            <p id="step-description"></p>
+            
+            <div class="workspace-header">
+                <h3>💻 Entorno Práctico (Edita el código para practicar)</h3>
+                <div class="workspace-actions">
+                    <button onclick="resetCode()">↺ Restaurar Código</button>
+                </div>
+            </div>
+
+            <div class="workspace">
+                <div class="editor-container">
+                    <div class="pane-title">Editor de Código</div>
+                    <textarea id="code-editor" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="preview-container">
+                    <div class="pane-title">Resultado / Vista Previa</div>
+                    <iframe id="preview-frame"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button id="prev-btn" class="btn" onclick="prevStep()">Anterior</button>
+            <button id="next-btn" class="btn" onclick="nextStep()">Siguiente</button>
+        </div>
+    </div>
+
+    <script>
+        const steps = [
+            // HTML
+            {
+                title: "1. Estructura Básica de HTML5",
+                description: "HTML define la estructura de una página. La etiqueta <!DOCTYPE html> declara la versión HTML5. Todo el contenido reside dentro de <html>, dividiéndose en <head> (metadatos/título) y <body> (contenido visible).",
+                code: `<!DOCTYPE html>\n<html>\n<head>\n  <title>Mi Primera Web</title>\n</head>\n<body>\n  <h1>¡Hola, Futuro Desarrollador!</h1>\n  <p>Esta es la estructura más elemental de un sitio web.</p>\n</body>\n</html>`
+            },
+            {
+                title: "2. Encabezados, Párrafos y Enlaces",
+                description: "Los encabezados (<h1> a <h6>) marcan la jerarquía de los contenidos. Los párrafos se crean con <p> y los enlaces con <a href='URL'>.",
+                code: `<h1>Encabezado Principal (H1)</h1>\n<h2>Subtítulo de Sección (H2)</h2>\n<p>HTML permite formatear texto con <b>negrita</b>, <i>cursiva</i> y <u>subrayado</u>.</p>\n<p>Visita este enlace: <a href="https://www.wikipedia.org" target="_blank">Ir a Wikipedia</a></p>`
+            },
+            {
+                title: "3. Imágenes y Listas",
+                description: "Las imágenes se insertan con <img src='ruta' alt='descripción'>. Las listas pueden ser ordenadas (<ol>) o desordenadas (<ul>), conteniendo elementos (<li>).",
+                code: `<h3>Lista de Lenguajes Recomendados:</h3>\n<ul>\n  <li>HTML5 (Estructura)</li>\n  <li>CSS3 (Diseño)</li>\n  <li>JavaScript (Interacción)</li>\n</ul>\n\n<h3>Imagen de Ejemplo:</h3>\n<img src="https://picsum.photos/200/100" alt="Imagen Aleatoria">`
+            },
+            {
+                title: "4. Tablas y Estructuración de Datos",
+                description: "Las tablas se construyen con <table>, definiendo filas con <tr>, encabezados de columna con <th> y celdas de datos con <td>.",
+                code: `<table border="1" style="width:100%; text-align:left;">\n  <tr>\n    <th>Tecnología</th>\n    <th>Función</th>\n  </tr>\n  <tr>\n    <td>HTML</td>\n    <td>Estructura y Maquetación</td>\n  </tr>\n  <tr>\n    <td>CSS</td>\n    <td>Estilo y Presentación Visual</td>\n  </tr>\n</table>`
+            },
+            {
+                title: "5. Formularios Interactivos",
+                description: "Los formularios (<form>) recopilan información del usuario utilizando etiquetas como <input>, <textarea>, y <button>.",
+                code: `<form>\n  <label>Nombre:</label><br>\n  <input type="text" placeholder="Escribe tu nombre"><br><br>\n  \n  <label>Correo Electrónico:</label><br>\n  <input type="email" placeholder="correo@ejemplo.com"><br><br>\n  \n  <button type="button" onclick="alert('¡Formulario Enviado!')">Enviar Datos</button>\n</form>`
+            },
+
+            // CSS
+            {
+                title: "6. Estilos y Reglas CSS",
+                description: "CSS permite cambiar la apariencia. Puedes aplicarlo directamente dentro de un bloque <style> usando selectores como 'body' o 'h1'.",
+                code: `<style>\n  body {\n    background-color: #e0f2fe;\n    font-family: Arial, sans-serif;\n  }\n  h1 {\n    color: #0369a1;\n    text-align: center;\n  }\n</style>\n\n<h1>Página con Estilo CSS</h1>\n<p>El fondo y el color del título cambian mediante reglas CSS.</p>`
+            },
+            {
+                title: "7. Clases (.) e Identificadores (#)",
+                description: "Usa clases (.nombre) para dar estilo a varios elementos, e identificadores (#nombre) para dar estilo único a un solo elemento específico.",
+                code: `<style>\n  .destacado {\n    background-color: yellow;\n    font-weight: bold;\n  }\n  #unico {\n    color: red;\n    border: 2px dashed red;\n    padding: 10px;\n  }\n</style>\n\n<p class="destacado">Párrafo con clase destacada.</p>\n<p>Párrafo normal.</p>\n<div id="unico">Bloque único con ID específico.</div>`
+            },
+            {
+                title: "8. El Modelo de Caja (Box Model)",
+                description: "En CSS, todo elemento es una caja compuesta por: Contenido, Padding (relleno interno), Border (borde) y Margin (margen externo).",
+                code: `<style>\n  .caja {\n    width: 200px;\n    background-color: #fef08a;\n    padding: 20px;\n    border: 4px solid #ca8a04;\n    margin: 30px;\n  }\n</style>\n\n<div class="caja">\n  Esta caja demuestra el modelo de caja en CSS.\n</div>`
+            },
+            {
+                title: "9. Diseño Flexible con Flexbox",
+                description: "Flexbox (`display: flex`) facilita la alineación y distribución de elementos en filas o columnas de manera fluida.",
+                code: `<style>\n  .contenedor {\n    display: flex;\n    justify-content: space-around;\n    background-color: #334155;\n    padding: 15px;\n  }\n  .tarjeta {\n    background-color: white;\n    padding: 15px;\n    border-radius: 5px;\n  }\n</style>\n\n<div class="contenedor">\n  <div class="tarjeta">Caja 1</div>\n  <div class="tarjeta">Caja 2</div>\n  <div class="tarjeta">Caja 3</div>\n</div>`
+            },
+
+            // XML
+            {
+                title: "10. Introducción a XML",
+                description: "XML (Extensible Markup Language) se usa para transportar y almacenar datos. A diferencia de HTML, en XML el creador define sus propias etiquetas.",
+                code: `<!-- Representación de un catálogo en XML -->\n<tienda>\n  <producto>\n    <nombre>Teclado Mecánico</nombre>\n    <precio>45.00</precio>\n  </producto>\n</tienda>`
+            },
+            {
+                title: "11. Reglas y Sintaxis Estricta de XML",
+                description: "Reglas clave de XML: 1) Debe tener un solo elemento raíz. 2) Todas las etiquetas deben cerrarse. 3) Es sensible a mayúsculas/minúsculas.",
+                code: `<?xml version="1.0" encoding="UTF-8"?>\n<agenda>\n  <contacto>\n    <nombre>María López</nombre>\n    <telefono>555-0192</telefono>\n  </contacto>\n</agenda>`
+            },
+            {
+                title: "12. Elementos XML con Atributos",
+                description: "Los elementos XML pueden contener atributos para proporcionar metadatos o información adicional sobre un elemento.",
+                code: `<biblioteca>\n  <libro id="101" categoria="ficcion">\n    <titulo>Cien Años de Soledad</titulo>\n    <autor>Gabriel García Márquez</autor>\n  </libro>\n  <libro id="102" categoria="ciencia">\n    <titulo>Breve Historia del Tiempo</titulo>\n    <autor>Stephen Hawking</autor>\n  </libro>\n</biblioteca>`
+            }
+        ];
+
+        let currentStep = 0;
+
+        function loadStep(index) {
+            currentStep = index;
+            
+            // UI Updates
+            document.getElementById('step-title').innerText = steps[currentStep].title;
+            document.getElementById('step-description').innerText = steps[currentStep].description;
+            document.getElementById('code-editor').value = steps[currentStep].code;
+            
+            // Progress Calculation
+            const progress = Math.round(((currentStep + 1) / steps.length) * 100);
+            document.getElementById('progress-text').innerText = `Progreso: ${progress}%`;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+
+            // Active State Sidebar
+            const buttons = document.querySelectorAll('.step-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('active', i === currentStep);
+            });
+
+            // Nav Buttons State
+            document.getElementById('prev-btn').disabled = currentStep === 0;
+            document.getElementById('next-btn').disabled = currentStep === steps.length - 1;
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const code = document.getElementById('code-editor').value;
+            const previewFrame = document.getElementById('preview-frame');
+            const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            
+            previewDoc.open();
+            previewDoc.write(code);
+            previewDoc.close();
+        }
+
+        function resetCode() {
+            document.getElementById('code-editor').value = steps[currentStep].code;
+            updatePreview();
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) loadStep(currentStep + 1);
+        }
+
+        function prevStep() {
+            if (currentStep > 0) loadStep(currentStep - 1);
+        }
+
+        // Initialize First Lesson
+        window.onload = () => loadStep(0);
+    </script>
+</body>
+</html>
